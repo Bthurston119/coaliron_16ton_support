@@ -83,10 +83,28 @@ void controller(float current_posn) {
     // Actuate if target not met
     if (remoteTargetAchieved == true) {
       halt();
+      set_flow_control_valve(LOW);
       target_posn = current_posn;   // fail safe
     }
     else if (directionOfMotion == false)   moveDown();
     else if (directionOfMotion == true)    moveUp();
+
+    // Set speed of press motion
+    if(directionOfMotion == false && current_posn > target_posn - motionBuffer)
+    {
+      set_flow_control_valve(LOW);
+    }
+    else 
+    {
+      set_flow_control_valve(HIGH);
+    }
+
+    if(directionOfMotion == true && remoteTargetAchieved == false)
+    {
+      set_flow_control_valve(HIGH);
+    }
+    else if (directionOfMotion == true) set_flow_control_valve(LOW);
+
     
   }
 }
